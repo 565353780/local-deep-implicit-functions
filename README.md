@@ -1,85 +1,32 @@
-# Overview
+# Local Deep Implicit Functions
 
-![alt text](assets/sif-teaser.png)
-![alt text](assets/ldif-teaser.png)
+## Source
 
-This is a joint codebase for LDIF ([Local Deep Implicit Functions for 3D
-Shape](https://arxiv.org/abs/1912.06126)) and SIF ([Learning Shape Templates
-with Structured Implicit Functions](https://arxiv.org/abs/1904.06447)). Note
-that LDIF was previously called Deep Structured Implicit Functions. It contains
-code to reproduce the results of those papers, convert input meshes into the LDIF
-and SIF representations, and visualize and extract meshes.
-representations.
-
-All .py and .sh files in the top-level
-`ldif/` directory are entry points into the code (`train.py`, `eval.py`,
-`meshes2dataset.py`, `unit_test.sh`, and `reproduce_shapenet_autoencoder.sh`).
-The rest of this README provides information on initial setup and basic
-documentation for those files. For additional documentation, please see each file.
-
-## Environment
-
-To set up the LDIF/SIF environment, follow these steps:
-
-#### 1. Set up the python environment
-
-The code was tested with python 3.6 and tensorflow 1.15 on linux. There is a
-requirements.txt containing all dependencies.
-
-If you use anaconda, run the following:
-
+```bash
+https://github.com/google/ldif
 ```
-conda env create --name ldif -f environment.yml
+
+## Install
+
+```bash
+conda env create -n ldif python=3.8
 conda activate ldif
+
+pip install trimesh tqdm absl_py matplotlib numpy parameterized
 ```
 
-If you use a system pip installation, run `pip install -r requirements.txt`
+## Build
 
-After this, the python environment should be ready to go. Please activate the
-environment before proceeding. The build scripts include some python.
+```bash
+sudo apt install mesa-common-dev libglu1-mesa-dev libosmesa6-dev libxi-dev libgl1-mesa-dev libglew-dev
+sudo apt install --reinstall libgl1-mesa-glx
 
-#### 2. Build GAPS
+cd ldif/gaps
+make mesa -j
 
-```./build_gaps.sh```
-
-GAPS is a geometry processing library used by this package to generate the data
-and create interactive visualizations. The script `build_gaps.sh` does the
-following. One, it installs the necessary dependencies with apt. If sudo is
-not available on the system, the requirements are that GAPS have include access
-to standard OpenGL and GLu library headers (`GL/gl.h`, `GL/glu.h`) (on both linux and
-macos), and that OSMesa static libraries can be linked (on linux). If these are
-satisfied, the sudo line can be commented out. Two, it clones the
-[GAPS](https://github.com/tomfunkhouser/gaps) repository from GitHub, make some
-changes, and builds it. It also moves the qview folder into the gaps repository
-and modifies the makefiles. The `qview` executable is a C++ program written using
-GAPS to visualize SIF and LDIF representations. Finally, the script compiles all
-necessary GAPS C++ executables, which are called by the python code. If this step
-was successful, running `./gaps_is_installed.sh` should echo `Ready to go!`
-
-GAPS should compile with no warnings. Please report any warnings by opening a
-GitHub issue- the information would be greatly appreciated.
-
-#### 3. Build the inference kernel (Optional, but highly recommended)
-
-```./build_kernel.sh```
-
-If successful, there should be a binary ldif2mesh in the ldif/ldif2mesh/
-subdirectory. Note that the inference kernel assumes the CUDA toolkit is
-installed and that a gpu supporting compute 6.1 (Pascal, so 10-series or newer)
-is available. The nvcc command is part of the CUDA toolkit. If you have an older
-gpu, you can try older compute versions for `--gpu-architecture` and `--gpu-code`,
-but performance may be reduced and some newer features are used, so it might not
-compile.
-
-If you do not want to use the inference kernel or don't have a GPU, then you can
-pass `--nouse_inference_kernel` to `eval.py`, which is the only script that
-typically calls the kernel. It will then use pure tensorflow ops for evaluating
-LDIF, as is done during training (for autodiff support). However, it would be
-orders of magnitude slower, so it is really not recommended if more than ~20
-meshes need to be evaluated.
-
-The kernel should compile with no warnings. Please report any warnings by
-opening a GitHub issue- this information would be greatly appreciated.
+cd ../..
+./ldif/ldif2mesh/build.sh
+```
 
 ## Datasets
 

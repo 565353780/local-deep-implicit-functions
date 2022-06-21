@@ -42,6 +42,15 @@ if [[ $major_version -ge 10 ]]; then
     -gencode=arch=compute_75,code=sm_75"
 fi
 
+# Support for (e.g. RTX 3080 Ti). Requires CUDA 11.
+if [[ $major_version -ge 11 ]]; then
+  echo "Adding CUDA 11 Targets."
+  targets="${targets} \
+    -gencode=arch=compute_86,code=sm_86"
+fi
+
+
+
 nvcc -Xptxas -O3 \
   ${targets} \
   --ptxas-options=-v -maxrregcount 63 $1 \
