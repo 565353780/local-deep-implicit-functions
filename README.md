@@ -28,74 +28,30 @@ cd ../..
 ./ldif/ldif2mesh/build.sh
 ```
 
-## Datasets
+## Dataset
 
-To run LDIF/SIF, first a dataset should be made. The input to this step is a
-directory of watertight meshes, and the output is a directory containing the
-files needed to train and evaluate LDIF/SIF.
-
-Create an input directory somewhere on disk, with the following structure:
-
-```[path/to/root]/{train/val/test}/{class names}/{.ply files}```
-
-The properties of the dataset (# and name of classes, size of the splits, name
-of examples, etc.) are determined from the directory structure. If you want to
-reproduce the shapenet results, then see `./reproduce_shapenet_autoencoder.sh`. A
-dataset doesn't need to have a train, test, and val split, only whichever splits
-you want to use. You could make a dataset with just a test split for a
-comparison, for example. Note that for convenience the code tries to check if
-the class names are wordnet synsets and will convert them to shapenet names
-(i.e. 02691156 -> airplane) if they are-- if it can't detect a synset it will
-just use the folder name as the class name.
-
-Note that .ply files are required, but the GAPS library provides a shell utility
-for converting between file formats. You can do
-`./ldif/gaps/bin/x86_64/msh2msh mesh.obj mesh.ply` as an example
-conversion, which will read mesh.obj and write a new file mesh.ply to disk.
-
-It is very important that the input meshes be watertight at training time.
-GAPS provides a program msh2df that can do the conversion, if you are not
-interested in exactly replicating the OccNet experiment's process. Here is an
-example command that will make a unit-cube sized mesh watertight:
-
+```bash
+./ldif/gaps/bin/x86_64/msh2msh mesh.obj mesh.ply
 ```
+
+or
+
+```bash
 ./ldif/gaps/bin/x86_64/msh2df input.ply tmp.grd -estimate_sign -spacing 0.002 -v
 ./ldif/gaps/bin/x86_64/grd2msh tmp.grd output.ply
 rm tmp.grd
 ```
-Msh2df outputs an SDF voxel grid, while grd2msh runs marching cubes to extract a
-mesh from the generated SDF grid. The msh2df algorithm rasterizes the mesh to a
-voxel grid and then floodfills at a resolution determined by the `-spacing`
-parameter in order to determine the sign. The smaller the value, the higher the
-resolution, the smaller the smallest allowable hole in the mesh, and the slower
-the algorithm. The bigger the value, the lower the resolution, the bigger the
-smallest allowable hole in the mesh, and the faster the algorithm. The run time
-of both msh2df and of the rest of the dataset creation pipeline will vary greatly
-depending on the `-spacing` parameter. The default value of 0.002 is quite high
-resolution for a mesh the size of a unit cube.
 
-While msh2df is provided as a utility, it was not used to generate the data for
-the trained LDIF+SIF models. For reproducing the shapenet results, please use
-the TSDF fusion package used by the
-[OccNet repository](https://github.com/autonomousvision/occupancy_networks), not
-msh2df.
+then, save as
 
-To actually make a dataset once watertight meshes are available, run:
-
-```
-python meshes2dataset.py --mesh_directory [path/to/dataset_root] \
-  --dataset_directory [path/to/nonexistent_output_directory]
+```bash
+<path-to-root>/{train/val/test}/{class names}/{.ply files}
 ```
 
-Please see `meshes2dataset.py` for more flags and documentation. To avoid excess
-disk usage (and avoid having to pass in the input directory path to all
-subsequent scripts), symlinks are created during this process that point to the
-meshes in the input directory. Please do not delete or move the input directory
-after dataset creation, or the code won't have access to the ground truth meshes
-for evaluation.
-
-The dataset generation code writes 7-9mb of data per mesh (about 330GB for
-shapenet-13).
+```
+python meshes2dataset.py --mesh_directory <path-to-dataset_root> \
+  --dataset_directory <path-to-nonexistent_output_directory>
+```
 
 ## Training
 
