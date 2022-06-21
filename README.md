@@ -9,18 +9,18 @@ https://github.com/google/ldif
 ## Install
 
 ```bash
+sudo apt install mesa-common-dev libglu1-mesa-dev libosmesa6-dev libxi-dev libgl1-mesa-dev libglew-dev
+sudo apt install --reinstall libgl1-mesa-glx
+
 conda env create -n ldif python=3.8
 conda activate ldif
 
-pip install trimesh tqdm absl_py matplotlib numpy parameterized
+pip install trimesh tqdm absl_py matplotlib numpy parameterized tensorboard
 ```
 
 ## Build
 
 ```bash
-sudo apt install mesa-common-dev libglu1-mesa-dev libosmesa6-dev libxi-dev libgl1-mesa-dev libglew-dev
-sudo apt install --reinstall libgl1-mesa-glx
-
 cd ldif/gaps
 make mesa -j
 
@@ -53,45 +53,16 @@ python meshes2dataset.py --mesh_directory <path-to-dataset_root> \
   --dataset_directory <path-to-nonexistent_output_directory>
 ```
 
-## Training
-
-To train a SIF or LDIF, run the following:
+## Train
 
 ```
-python train.py --dataset_directory [path/to/dataset_root] \
+python train.py --dataset_directory <path-to-dataset_root> \
   --experiment_name [name] --model_type {ldif, sif, or sif++}
 ```
 
-The dataset directory should be whatever it was set to when running
-meshes2dataset.py. The experiment name can be arbitrary, it is a tag used to
-load the model during inference/eval/interactive sessions. The `model_type`
-determines what hyperparameters to use. ``ldif`` will train a 32x32 LDIF
-with 16 symmetric and 16 asymmetric elements. ``sif`` will replicate the
-SIF representation proposed in the SIF paper. ``sif++`` will train
-an improved version of SIF using the loss and network from LDIF, as well
-as gaussians that support rotation, but without any latent codes per element.
-By default trained models are stored under `{root}/trained_models/`, but
-this can be changed with the ``--model_directory`` flag. For more flags and
-documentation, please see `train.py`.
-
-It is also possible to make model types besides the paper version of LDIF/SIF.
-For details, please see `ldif/model/hparams.py`. Both LDIF and SIF are stored as
-specific hparam combos. Adding a new combo and/or new hyperparameters would be
-the easiest way to evaluate how a modification to LDIF/SIF would change the
-performance. It would also be how to turn off partial symmetry, or adjust
-the number of shape elements or size of the latent codes. The only
-special hyperparameter is batch size, which is read directly by the `train.py`
-script, and always set to 1 during inference.
-
-While training, the model write tensorboard summaries. If you don't have
-tensorboard, you can install it with `conda install tensorboard` or
-`pip install tensorboard`. Then you can run
-
 ```
-tensorboard --logdir [ldif_root]/trained_models/sif-transcoder-[experiment_name]/log
+tensorboard --logdir <ldif_root>/trained_models/sif-transcoder-<experiment_name>/log
 ```
-
-assuming that `--model_root` was set to the default `ldif_root]/trained_models/`
 
 Warning: Training an LDIF from scratch takes a long time. SIF also takes a while, though
 not nearly as long. The expected performance with a V100 and a batch size of 24 is
