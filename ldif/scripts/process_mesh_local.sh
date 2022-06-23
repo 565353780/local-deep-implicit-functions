@@ -34,7 +34,9 @@ fi
 mkdir -p $outdir || true
 
 mesh_orig=${outdir}/mesh_orig.${mesh_in##*.}
+if [ ! -f "$mesh_orig" ]; then
 ln -s $mesh_in $mesh_orig
+fi
 
 mesh=${outdir}/model_normalized.obj
 # Step 0) Normalize the mesh before applying all other operations.
