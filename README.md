@@ -15,7 +15,9 @@ sudo apt install --reinstall libgl1-mesa-glx
 conda env create -n ldif python=3.8
 conda activate ldif
 
-pip install trimesh tqdm absl_py matplotlib numpy parameterized tensorboard
+pip install trimesh tqdm absl_py matplotlib numpy parameterized six scikit-image scipy \
+      tensorflow-hub joblib pandas tabulate tensorflow-gpu apache-beam pillow tensorboard
+pip install protobuf==3.20
 ```
 
 ## Build
