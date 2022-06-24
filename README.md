@@ -12,11 +12,12 @@ https://github.com/google/ldif
 sudo apt install mesa-common-dev libglu1-mesa-dev libosmesa6-dev libxi-dev libgl1-mesa-dev libglew-dev
 sudo apt install --reinstall libgl1-mesa-glx
 
-conda env create -n ldif python=3.8
+conda env create -n ldif python=3.7
 conda activate ldif
 
 pip install trimesh tqdm absl_py matplotlib numpy parameterized six scikit-image scipy \
-      tensorflow-hub joblib pandas tabulate tensorflow-gpu apache-beam pillow tensorboard
+      tensorflow-hub joblib pandas tabulate apache-beam pillow tensorboard
+pip install tensorflow-gpu==1.15
 pip install protobuf==3.20
 ```
 
