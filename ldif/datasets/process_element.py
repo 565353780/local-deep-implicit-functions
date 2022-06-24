@@ -48,6 +48,8 @@ def load_example_dict(example_directory, log_level=None):
   # need to also be stored in the GAPS format or be artificially multiplied
   # by 1000.
   depth_renders = e.depth_images  # [20, 224, 224, 1]. 1 or 1000? trailing 1?
+  if depth_renders is None:
+    return None
   assert depth_renders.shape[0] == 1
   depth_renders = depth_renders[0, ...]
   end_t = time.time()

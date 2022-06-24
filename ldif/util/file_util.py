@@ -138,7 +138,10 @@ def read_npz(p):
   if p[-4:] != '.npz':
     raise ValueError(f'Expected .npz ending for file {p}.')
   with base_util.FS.open(p, 'rb') as f:
-    arr = dict(np.load(f, allow_pickle=True))
+    try:
+      arr = dict(np.load(f, allow_pickle=True))
+    except:
+      arr = None
   return arr
 
 

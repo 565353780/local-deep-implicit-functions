@@ -106,6 +106,8 @@ def process_one(f, mesh_directory, dataset_directory, skip_existing, log_level):
 
 def serialize(example_dir, log_level):
   d = process_element.load_example_dict(example_dir, log_level)
+  if d is None:
+      return None
   s = process_element.make_tf_example(d)
   return s
 
@@ -115,7 +117,7 @@ def main(argv):
   random.seed(2077)
   log.set_level(FLAGS.log_level)
 
-  n_jobs = os.cpu_count()
+  n_jobs = int(os.cpu_count() / 2)
   assert FLAGS.max_threads != 0
   if FLAGS.max_threads > 0:
     n_jobs = FLAGS.max_threads
@@ -195,7 +197,10 @@ def main(argv):
           to_process = elements_of_split[start_idx:end_idx]
           serialized = Parallel(n_jobs=n_jobs)(delayed(serialize)(d, FLAGS.log_level)
                 for d in to_process)
+          #FIXME: exist empty file with .npz and .sdf
           for s in serialized:
+            if s is None:
+              continue
             writer.write(s)
 
 

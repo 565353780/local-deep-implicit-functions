@@ -351,7 +351,10 @@ class InferenceExample(object):
     return self._r2n2_images
 
   def load_depth_and_normal_npz(self, path):
-    depth_normal_arr = file_util.read_npz(path)['arr_0']
+    arr_dict = file_util.read_npz(path)
+    if arr_dict is None:
+      return None, None
+    depth_normal_arr = arr_dict['arr_0']
     depth = depth_normal_arr[..., 0]  # For backwards compat.
     normals = depth_normal_arr[..., 1:]
     return depth, normals
@@ -514,6 +517,8 @@ class InferenceExample(object):
     if not hasattr(self, '_depth_images'):
       self._depth_images, self._cam_normal_images = self.load_depth_and_normal_npz(
           self.dodeca_depth_and_normal_path)
+      if self._depth_images is None:
+          return None
       self._depth_images = np.reshape(self._depth_images, [1, 20, 224, 224, 1])
       self._depth_images *= 1000.0
     return self._depth_images
@@ -719,8 +724,15 @@ class InferenceExample(object):
         # log.info(f'The uniform points have shape {uniform_samples.shape}')
       else:
         uniform_samples = self._archive['uniform_samples']
-      self._uniform_samples = np.reshape(uniform_samples,
-                                         [100000, 4]).astype(np.float32)
+      # FIXME: use try to avoid error
+      try:
+        self._uniform_samples = np.reshape(uniform_samples,
+                                           [100000, 4]).astype(np.float32)
+      except:
+        print("[ERROR][InferenceExample::uniform_samples]")
+        print("\t reshape uniform_samples failed!")
+        print("uniform_sample_path =", self._directory_root + "/uniform_points.sdf")
+        #  self._uniform_samples = uniform_samples
     return self._uniform_samples
 
   @property
