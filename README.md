@@ -16,9 +16,9 @@ conda create -n ldif python=3.7
 conda activate ldif
 
 python -m pip install --upgrade pip
-pip install trimesh tqdm absl_py matplotlib numpy parameterized six scikit-image scipy \
+pip install trimesh tqdm absl_py matplotlib numpy parameterized six scipy \
       tensorflow-hub joblib pandas tabulate apache-beam pillow tensorboard
-pip install tensorflow-gpu==1.15.5
+pip install tensorflow-gpu==1.15.5 scikit-image==0.16.2
 ```
 
 ## Build

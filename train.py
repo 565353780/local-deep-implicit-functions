@@ -220,7 +220,9 @@ def main(argv):
   gpu_options = tf.GPUOptions(
       per_process_gpu_memory_fraction=allowable_fraction)
 
-  with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as session:
+  config = tf.ConfigProto(gpu_options=gpu_options)
+  config.gpu_options.allow_growth = True
+  with tf.Session(config=config) as session:
     writer = tf.summary.FileWriter(f'{experiment_dir}/log', session.graph)
     log.info('Initializing variables...')
     session.run([init_op])
