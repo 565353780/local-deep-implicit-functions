@@ -15,10 +15,10 @@ sudo apt install --reinstall libgl1-mesa-glx
 conda create -n ldif python=3.7
 conda activate ldif
 
+python -m pip install --upgrade pip
 pip install trimesh tqdm absl_py matplotlib numpy parameterized six scikit-image scipy \
       tensorflow-hub joblib pandas tabulate apache-beam pillow tensorboard
-pip install tensorflow-gpu==1.15
-pip install protobuf==3.20
+pip install tensorflow-gpu==1.15.5
 ```
 
 ## Build
