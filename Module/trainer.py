@@ -110,7 +110,6 @@ class Trainer(object):
             return False
         print("[INFO][Trainer::train]")
         print("\tTF GPU memory used: " + str(allowable_fraction*100) + "%")
-
         gpu_options = tf.GPUOptions(
             per_process_gpu_memory_fraction=allowable_fraction)
 
