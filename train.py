@@ -71,7 +71,7 @@ flags.DEFINE_string(
     ' name that is already written. Note that global step will be reloaded.')
 
 flags.DEFINE_integer(
-    'train_step_count', 1000000,
+    'train_step_count', 100000000000000000000,
     'The number of training steps to take before training is complete.')
 
 flags.DEFINE_string(
