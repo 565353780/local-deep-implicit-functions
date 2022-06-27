@@ -33,8 +33,6 @@ cd ../..
 
 ## Dataset
 
-## Tool Usage
-
 ```bash
 ./ldif/gaps/bin/x86_64/msh2msh mesh.obj mesh.ply
 ```
@@ -54,18 +52,14 @@ then, save as
 ```
 
 ```
-python meshes2dataset.py --mesh_directory <path-to-dataset_root> \
-  --dataset_directory <path-to-nonexistent_output_directory>
+./meshes2dataset.sh
 ```
 
 ## Train
 
 ```
 ./train.sh
-```
-
-```
-tensorboard --logdir ./trained_models/sif-transcoder-<experiment_name>/log
+./log.sh
 ```
 
 ## Eval
